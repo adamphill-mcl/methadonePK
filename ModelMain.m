@@ -10,6 +10,8 @@ function [outputArg1,outputArg2] = ModelMain(formulation,CypScore)
     
     % Load the relevant dose schedule (DoseTable) from file
     load('DoseTable','DoseTable'); %change this every time
+
+    load('DrugPars.mat');
     
     %IC50s - update from Cliffs data
     IC50IKr_meth  = 7e-6;       % IC50 for IKr
@@ -43,9 +45,9 @@ function [outputArg1,outputArg2] = ModelMain(formulation,CypScore)
             %calculate the combined block for the parent and metbolite for
             %each channel
             
-            RunTable.IKrBlock = (1 ./ (1 + 10.^((log10(IC50IKr_meth) - RunTable.Conc_meth) .* hIKr_meth))) + (1 - (1 ./ (1 + 10.^((log10(IC50IKr_meth) - RunTable.Conc_meth) .* hIKr_meth)))) .* (1 ./ (1 + 10.^((log10(IC50IKr_metab) - RunTable.Conc_metab) .* hIKr_metab)));
-            RunTable.ICaLBlock = (1 ./ (1 + 10.^((log10(IC50ICaL_meth) - RunTable.Conc_meth) .* hICaL_meth))) + (1 - (1 ./ (1 + 10.^((log10(IC50ICaL_meth) - RunTable.Conc_meth) .* hICaL_meth)))) .* (1 ./ (1 + 10.^((log10(IC50ICaL_metab) - RunTable.Conc_metab) .* hICaL_metab)));
-            RunTable.INaLBlock = (1 ./ (1 + 10.^((log10(IC50INaL_meth) - RunTable.Conc_meth) .* hINaL_meth))) + (1 - (1 ./ (1 + 10.^((log10(IC50INaL_meth) - RunTable.Conc_meth) .* hINaL_meth)))) .* (1 ./ (1 + 10.^((log10(IC50INaL_metab) - RunTable.Conc_metab) .* hINaL_metab)));
+            RunTable.IKrBlock = (1 ./ (1 + 10.^((log10(DrugPars.IC50s('IKr_methR')) - RunTable.Conc_meth) .* DrugPars.h('IKr_methR')))) + (1 - (1 ./ (1 + 10.^((log10(DrugPars.IC50s('IKr_methR')) - RunTable.Conc_meth) .* DrugPars.h('IKr_methR'))))) .* (1 ./ (1 + 10.^((log10(DrugPars.IC50s('IKr_metab')) - RunTable.Conc_metab) .* DrugPars.h('IKr_metab'))));
+            RunTable.ICaLBlock = (1 ./ (1 + 10.^((log10(DrugPars.IC50s('ICaL_methR')) - RunTable.Conc_meth) .* DrugPars.h('ICaL_methR')))) + (1 - (1 ./ (1 + 10.^((log10(DrugPars.IC50s('ICaL_methR')) - RunTable.Conc_meth) .* DrugPars.h('ICaL_methR'))))) .* (1 ./ (1 + 10.^((log10(DrugPars.IC50s('ICaL_metab')) - RunTable.Conc_metab) .* DrugPars.h('ICaL_methR'))));
+            RunTable.INaLBlock = (1 ./ (1 + 10.^((log10(DrugPars.IC50s('INaL_methR')) - RunTable.Conc_meth) .* DrugPars.h('INaL_methR')))) + (1 - (1 ./ (1 + 10.^((log10(DrugPars.IC50s('INaL_methR')) - RunTable.Conc_meth) .* DrugPars.h('INaL_methR'))))) .* (1 ./ (1 + 10.^((log10(DrugPars.IC50s('INaL_metab')) - RunTable.Conc_metab) .* DrugPars.h('INaL_methR'))));
 
             %Calculate the risk score for parent and metabolite combined using the two-channel
 % axis-of-arrhythmia by Heitmann et al (unpublished).
