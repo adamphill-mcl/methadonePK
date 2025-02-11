@@ -14,7 +14,8 @@ function [outputArg1,outputArg2] = ModelMain_AH(formulation,CypScore)
      % Load the dose response parameters from Cliffs data from file
      load('DrugPars.mat');
     
-    
+    V_R = 176; %apparent volumes of central and peripheral from model
+    V_S = 98.3;
     % Run the Aruldhas model using the given dose schedule
 
     switch formulation
@@ -26,8 +27,10 @@ function [outputArg1,outputArg2] = ModelMain_AH(formulation,CypScore)
     
             % Time-dependent concentration of the drug in the central compartment
             tsim = RunTable.t;       % time points of the simulation
-            RunTable.Conc_meth = log10(RunTable.A2/1000/309.445); %convert to molar. mw for metadone. log units
-            RunTable.Conc_metab = log10(RunTable.A3/1000/309.445); %convert to molar. confirm mw for metabolite. log units
+%             RunTable.Conc_meth = log10(RunTable.A2/1000/309.445); %convert to molar. mw for metadone. log units
+%             RunTable.Conc_metab = log10(RunTable.A3/1000/309.445); %convert to molar. confirm mw for metabolite. log units
+            RunTable.Conc_meth = log10(RunTable.A2/1000/V_R/309.445); %above doesnt take into account the apparent volume of compartment
+            RunTable.Conc_metab = log10(RunTable.A3/1000/V_R/309.445); %convert to molar. confirm mw for metabolite. log units
         
             %calculate the combined block for the parent and metbolite for
             %each channel
@@ -64,8 +67,8 @@ function [outputArg1,outputArg2] = ModelMain_AH(formulation,CypScore)
     
             % Time-dependent concentration of the drug in the central compartment
             tsim = RunTable.t;       % time points of the simulation
-            RunTable.Conc_meth = log10(RunTable.A2/1000/309.445); %convert to molar. mw for metadone. log units
-            RunTable.Conc_metab = log10(RunTable.A3/1000/309.445); %convert to molar. confirm mw for metabolite. log units
+            RunTable.Conc_meth = log10(RunTable.A2/1000/V_S/309.445); %convert to molar. mw for metadone. log units
+            RunTable.Conc_metab = log10(RunTable.A3/1000/V_S/309.445); %convert to molar. confirm mw for metabolite. log units
         
             %calculate the combined block for the parent and metbolite for
             %each channel
