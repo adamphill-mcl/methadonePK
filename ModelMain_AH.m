@@ -23,7 +23,7 @@ function [outputArg1,outputArg2] = ModelMain_AH(formulation,CypScore)
             mkdir(strcat(formulation, '_', num2str(CypScore)))
             flag = 'R';     % Aruldhas flag must be 'R' or 'S' methadone
             dt = 0.1;       % Simulation time step (hours)
-            RunTable = RunModel_AH(DoseTable,flag,dt);
+            RunTable = RunModel_AH(DoseTable,flag,dt,CypScore);
     
             % Time-dependent concentration of the drug in the central compartment
             tsim = RunTable.t;       % time points of the simulation
