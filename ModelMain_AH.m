@@ -110,19 +110,22 @@ function [outputArg1,outputArg2] = ModelMain_AH(formulation,CypScore)
                     RunTable = RunModel(DoseTable,flag,dt);
             
                     % Time-dependent concentration of the drug in the central compartment
-                    RunTable.Conc_meth = log10(RunTable.A2/1000/309.445); %convert to molar. mw for metadone. log units
-                    RunTable.Conc_metab = log10(RunTable.A3/1000/309.445); %convert to molar. confirm mw for metabolite. log units
+                    
                     
                      %calculate the combined block for the parent and metbolite for
                     %each channel
-                    if ii == 1
-                        RunTable.IKrBlock = (1 ./ (1 + 10.^((log10(DrugPars.IC50s('IKr_methR')) - RunTable.Conc_meth) .* DrugPars.h('IKr_methR')))) + (1 - (1 ./ (1 + 10.^((log10(DrugPars.IC50s('IKr_methR')) - RunTable.Conc_meth) .* DrugPars.h('IKr_methR'))))) .* (1 ./ (1 + 10.^((log10(DrugPars.IC50s('IKr_metab')) - RunTable.Conc_metab) .* DrugPars.h('IKr_metab'))));
-                        RunTable.ICaLBlock = (1 ./ (1 + 10.^((log10(DrugPars.IC50s('ICaL_methR')) - RunTable.Conc_meth) .* DrugPars.h('ICaL_methR')))) + (1 - (1 ./ (1 + 10.^((log10(DrugPars.IC50s('ICaL_methR')) - RunTable.Conc_meth) .* DrugPars.h('ICaL_methR'))))) .* (1 ./ (1 + 10.^((log10(DrugPars.IC50s('ICaL_metab')) - RunTable.Conc_metab) .* DrugPars.h('ICaL_metab'))));
-                        RunTable.INaLBlock = (1 ./ (1 + 10.^((log10(DrugPars.IC50s('INaL_methR')) - RunTable.Conc_meth) .* DrugPars.h('INaL_methR')))) + (1 - (1 ./ (1 + 10.^((log10(DrugPars.IC50s('INaL_methR')) - RunTable.Conc_meth) .* DrugPars.h('INaL_methR'))))) .* (1 ./ (1 + 10.^((log10(DrugPars.IC50s('INaL_metab')) - RunTable.Conc_metab) .* DrugPars.h('INaL_metab'))));
+                    if ii == 1 %not going o twork as need to acocunt for A cmopartments too - move runmodel ino tloop and write two tabel whihc are then compbined
+                        RunTable.Conc_meth_R = log10(RunTable.A2/1000/309.445); %convert to molar. mw for metadone. log units
+                        RunTable.Conc_metab_R = log10(RunTable.A3/1000/309.445); %convert to molar. confirm mw for metabolite. log units
+                        RunTable.IKrBlock_R = (1 ./ (1 + 10.^((log10(DrugPars.IC50s('IKr_methR')) - RunTable.Conc_meth) .* DrugPars.h('IKr_methR')))) + (1 - (1 ./ (1 + 10.^((log10(DrugPars.IC50s('IKr_methR')) - RunTable.Conc_meth) .* DrugPars.h('IKr_methR'))))) .* (1 ./ (1 + 10.^((log10(DrugPars.IC50s('IKr_metab')) - RunTable.Conc_metab) .* DrugPars.h('IKr_metab'))));
+                        RunTable.ICaLBlock_R = (1 ./ (1 + 10.^((log10(DrugPars.IC50s('ICaL_methR')) - RunTable.Conc_meth) .* DrugPars.h('ICaL_methR')))) + (1 - (1 ./ (1 + 10.^((log10(DrugPars.IC50s('ICaL_methR')) - RunTable.Conc_meth) .* DrugPars.h('ICaL_methR'))))) .* (1 ./ (1 + 10.^((log10(DrugPars.IC50s('ICaL_metab')) - RunTable.Conc_metab) .* DrugPars.h('ICaL_metab'))));
+                        RunTable.INaLBlock_R = (1 ./ (1 + 10.^((log10(DrugPars.IC50s('INaL_methR')) - RunTable.Conc_meth) .* DrugPars.h('INaL_methR')))) + (1 - (1 ./ (1 + 10.^((log10(DrugPars.IC50s('INaL_methR')) - RunTable.Conc_meth) .* DrugPars.h('INaL_methR'))))) .* (1 ./ (1 + 10.^((log10(DrugPars.IC50s('INaL_metab')) - RunTable.Conc_metab) .* DrugPars.h('INaL_metab'))));
                     else
-                        RunTable.IKrBlock = (1 ./ (1 + 10.^((log10(DrugPars.IC50s('IKr_methS')) - RunTable.Conc_meth) .* DrugPars.h('IKr_methS')))) + (1 - (1 ./ (1 + 10.^((log10(DrugPars.IC50s('IKr_methS')) - RunTable.Conc_meth) .* DrugPars.h('IKr_methS'))))) .* (1 ./ (1 + 10.^((log10(DrugPars.IC50s('IKr_metab')) - RunTable.Conc_metab) .* DrugPars.h('IKr_metab'))));
-                        RunTable.ICaLBlock = (1 ./ (1 + 10.^((log10(DrugPars.IC50s('ICaL_methS')) - RunTable.Conc_meth) .* DrugPars.h('ICaL_methS')))) + (1 - (1 ./ (1 + 10.^((log10(DrugPars.IC50s('ICaL_methS')) - RunTable.Conc_meth) .* DrugPars.h('ICaL_methS'))))) .* (1 ./ (1 + 10.^((log10(DrugPars.IC50s('ICaL_metab')) - RunTable.Conc_metab) .* DrugPars.h('ICaL_metab'))));
-                        RunTable.INaLBlock = (1 ./ (1 + 10.^((log10(DrugPars.IC50s('INaL_methS')) - RunTable.Conc_meth) .* DrugPars.h('INaL_methS')))) + (1 - (1 ./ (1 + 10.^((log10(DrugPars.IC50s('INaL_methS')) - RunTable.Conc_meth) .* DrugPars.h('INaL_methS'))))) .* (1 ./ (1 + 10.^((log10(DrugPars.IC50s('INaL_metab')) - RunTable.Conc_metab) .* DrugPars.h('INaL_metab'))));
+                        RunTable.Conc_meth_S = log10(RunTable.A2/1000/309.445); %convert to molar. mw for metadone. log units
+                        RunTable.Conc_metab_S = log10(RunTable.A3/1000/309.445); %convert to molar. confirm mw for metabolite. log units
+                        RunTable.IKrBlock_S = (1 ./ (1 + 10.^((log10(DrugPars.IC50s('IKr_methS')) - RunTable.Conc_meth) .* DrugPars.h('IKr_methS')))) + (1 - (1 ./ (1 + 10.^((log10(DrugPars.IC50s('IKr_methS')) - RunTable.Conc_meth) .* DrugPars.h('IKr_methS'))))) .* (1 ./ (1 + 10.^((log10(DrugPars.IC50s('IKr_metab')) - RunTable.Conc_metab) .* DrugPars.h('IKr_metab'))));
+                        RunTable.ICaLBlock_S = (1 ./ (1 + 10.^((log10(DrugPars.IC50s('ICaL_methS')) - RunTable.Conc_meth) .* DrugPars.h('ICaL_methS')))) + (1 - (1 ./ (1 + 10.^((log10(DrugPars.IC50s('ICaL_methS')) - RunTable.Conc_meth) .* DrugPars.h('ICaL_methS'))))) .* (1 ./ (1 + 10.^((log10(DrugPars.IC50s('ICaL_metab')) - RunTable.Conc_metab) .* DrugPars.h('ICaL_metab'))));
+                        RunTable.INaLBlock_S = (1 ./ (1 + 10.^((log10(DrugPars.IC50s('INaL_methS')) - RunTable.Conc_meth) .* DrugPars.h('INaL_methS')))) + (1 - (1 ./ (1 + 10.^((log10(DrugPars.IC50s('INaL_methS')) - RunTable.Conc_meth) .* DrugPars.h('INaL_methS'))))) .* (1 ./ (1 + 10.^((log10(DrugPars.IC50s('INaL_metab')) - RunTable.Conc_metab) .* DrugPars.h('INaL_metab'))));
                     end
                         %Calculate the risk score for parent and metabolite combined using the two-channel
                         % axis-of-arrhythmia by Heitmann et al (unpublished).
@@ -146,37 +149,7 @@ function [outputArg1,outputArg2] = ModelMain_AH(formulation,CypScore)
                     savefig(figure(2),strcat('./',formulation, '_', num2str(CypScore),'/',formulation, '_', num2str(CypScore),'_', 'overlaid','.fig'))
                 end
             end
-            
 
-
-
-
-
-
-
-
-
-%         otherwise
-%             error('Input formulation must be ''R'', ''S'', or "racaemic" only.');
     end
-    
-%     flag = 'S';     % Aruldhas flag must be 'R' or 'S' methadone
-%     dt = 0.1;       % Simulation time step (hours)
-%     RunTable = RunModel(DoseTable,flag,dt);
-%     
-%     % Time-dependent concentration of the drug in the central compartment
-%     tsim = RunTable.t;       % time points of the simulation
-%     %Conc = RunTable.A3;      % central compartment. WARNING: this probably needs rescaling for different units
-%     Conc = RunTable.A3/1000/309.445*1000000000; %convert to nm. mw for metadone %AH edit
-%     
-%     % Interpolate the RiskScore for Methadone from the dose-risk curve in DrugTable
-%     RunTable.RiskScore = interp1(DrugTable.Conc, DrugTable.RiskScore, Conc);
-%     
-%     % Plot the simulation results
-%     stackedplot(RunTable);
-%     plot(RunTable.t,RunTable.A1,'DisplayName','RunTable.A1');hold on;plot(RunTable.t,RunTable.A2,'DisplayName','RunTable.A2');plot(RunTable.t,RunTable.A3,'DisplayName','RunTable.A3');plot(RunTable.t,RunTable.A4,'DisplayName','RunTable.A4');plot(RunTable.t,RunTable.RiskScore,'DisplayName','RunTable.RiskScore');hold off;
-%     
-%     save('RunModel_S-meth_test','RunTable','DoseTable') %change this every time
-%     outputArg1 = inputArg1;
-%     outputArg2 = inputArg2;
+
 end
