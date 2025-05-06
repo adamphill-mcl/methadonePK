@@ -61,9 +61,9 @@ function [outputArg1,outputArg2] = ModelMain_Loewe(formulation,CypScore)
             plot(RunTable.t,RunTable.A1,'DisplayName','RunTable.A1');hold on;plot(RunTable.t,RunTable.A2,'DisplayName','RunTable.A2');plot(RunTable.t,RunTable.A3,'DisplayName','RunTable.A3');plot(RunTable.t,RunTable.A4,'DisplayName','RunTable.A4');plot(RunTable.t,RunTable.RiskScore,'DisplayName','RunTable.RiskScore');hold off;
             
 %             save the figures and data
-            save(strcat('./',formulation, '_', num2str(CypScore),'/',formulation, '_', num2str(CypScore)),'RunTable','DoseTable') %change this every time
-            savefig(figure(1),strcat('./',formulation, '_', num2str(CypScore),'/',formulation, '_', num2str(CypScore),'_', 'stacked','.fig'))
-            savefig(figure(2),strcat('./',formulation, '_', num2str(CypScore),'/',formulation, '_', num2str(CypScore),'_', 'overlaid','.fig'))
+            save(strcat('./',formulation, '_', strrep(num2str(CypScore),'.','_'),'/',formulation, '_', strrep(num2str(CypScore),'.','_')),'RunTable','DoseTable') %change this every time
+            savefig(figure(1),strcat('./',formulation, '_', strrep(num2str(CypScore),'.','_'),'/',formulation, '_', strrep(num2str(CypScore),'.','_'),'_', 'stacked','.fig'))
+            savefig(figure(2),strcat('./',formulation, '_', strrep(num2str(CypScore),'.','_'),'/',formulation, '_', strrep(num2str(CypScore),'.','_'),'_', 'overlaid','.fig'))
         
         case 'S'
             mkdir(strcat(formulation, '_', strrep(num2str(CypScore),'.','_')))
@@ -107,9 +107,9 @@ function [outputArg1,outputArg2] = ModelMain_Loewe(formulation,CypScore)
             plot(RunTable.t,RunTable.A1,'DisplayName','RunTable.A1');hold on;plot(RunTable.t,RunTable.A2,'DisplayName','RunTable.A2');plot(RunTable.t,RunTable.A3,'DisplayName','RunTable.A3');plot(RunTable.t,RunTable.A4,'DisplayName','RunTable.A4');plot(RunTable.t,RunTable.RiskScore,'DisplayName','RunTable.RiskScore');hold off;
             
 %             save the figures and data
-            save(strcat('./',formulation, '_', num2str(CypScore),'/',formulation, '_', num2str(CypScore)),'RunTable','DoseTable') %change this every time
-            savefig(figure(1),strcat('./',formulation, '_', num2str(CypScore),'/',formulation, '_', num2str(CypScore),'_', 'stacked','.fig'))
-            savefig(figure(2),strcat('./',formulation, '_', num2str(CypScore),'/',formulation, '_', num2str(CypScore),'_', 'overlaid','.fig'))
+            save(strcat('./',formulation, '_', strrep(num2str(CypScore),'.','_'),'/',formulation, '_', strrep(num2str(CypScore),'.','_')),'RunTable','DoseTable') %change this every time
+            savefig(figure(1),strcat('./',formulation, '_', strrep(num2str(CypScore),'.','_'),'/',formulation, '_', strrep(num2str(CypScore),'.','_'),'_', 'stacked','.fig'))
+            savefig(figure(2),strcat('./',formulation, '_', strrep(num2str(CypScore),'.','_'),'/',formulation, '_', strrep(num2str(CypScore),'.','_'),'_', 'overlaid','.fig'))
         
         case 'racemic'
             mkdir(strcat(formulation, '_', strrep(num2str(CypScore),'.','_')))
@@ -195,9 +195,9 @@ function [outputArg1,outputArg2] = ModelMain_Loewe(formulation,CypScore)
             %plot(RunTable.t,RunTable.A1,'DisplayName','RunTable.A1');hold on;plot(RunTable.t,RunTable.A2,'DisplayName','RunTable.A2');plot(RunTable.t,RunTable.A3,'DisplayName','RunTable.A3');plot(RunTable.t,RunTable.A4,'DisplayName','RunTable.A4');plot(RunTable.t,RunTable.RiskScore,'DisplayName','RunTable.RiskScore');hold off;
                     
             % save the figures and data
-            save(strcat('./',formulation, '_', num2str(CypScore),'/',formulation, '_', num2str(CypScore)),'RunTableR', 'RunTableS', 'MyTable', 'DoseTable') %change this every time
-            savefig(figure(1),strcat('./',formulation, '_', num2str(CypScore),'/',formulation, '_', num2str(CypScore),'_', 'stacked','.fig'))
-            savefig(figure(2),strcat('./',formulation, '_', num2str(CypScore),'/',formulation, '_', num2str(CypScore),'_', 'overlaid','.fig'))
+            save(strcat('./',formulation, '_', strrep(num2str(CypScore),'.','_'),'/',formulation, '_', strrep(num2str(CypScore),'.','_')),'RunTableR', 'RunTableS', 'MyTable', 'DoseTable') %change this every time
+            savefig(figure(1),strcat('./',formulation, '_', strrep(num2str(CypScore),'.','_'),'/',formulation, '_', strrep(num2str(CypScore),'.','_'),'_', 'stacked','.fig'))
+            savefig(figure(2),strcat('./',formulation, '_', strrep(num2str(CypScore),'.','_'),'/',formulation, '_', strrep(num2str(CypScore),'.','_'),'_', 'overlaid','.fig'))
     end  % switch
 
 end % function
