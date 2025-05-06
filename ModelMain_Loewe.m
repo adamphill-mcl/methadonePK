@@ -20,7 +20,7 @@ function [outputArg1,outputArg2] = ModelMain_Loewe(formulation,CypScore)
 
     switch formulation
         case 'R'
-            mkdir(strcat(formulation, '_', num2str(CypScore)))
+            mkdir(strcat(formulation, '_', strrep(num2str(CypScore),'.','_')))
             flag = 'R';     % Aruldhas flag must be 'R' or 'S' methadone
             dt = 0.1;       % Simulation time step (hours)
             RunTable = RunModel_AH(DoseTable,flag,dt,CypScore);
@@ -66,7 +66,7 @@ function [outputArg1,outputArg2] = ModelMain_Loewe(formulation,CypScore)
             savefig(figure(2),strcat('./',formulation, '_', num2str(CypScore),'/',formulation, '_', num2str(CypScore),'_', 'overlaid','.fig'))
         
         case 'S'
-            mkdir(strcat(formulation, '_', num2str(CypScore)))
+            mkdir(strcat(formulation, '_', strrep(num2str(CypScore),'.','_')))
             flag = 'S';     % Aruldhas flag must be 'R' or 'S' methadone
             dt = 0.1;       % Simulation time step (hours)
             RunTable = RunModel_AH(DoseTable,flag,dt,CypScore);
@@ -112,7 +112,7 @@ function [outputArg1,outputArg2] = ModelMain_Loewe(formulation,CypScore)
             savefig(figure(2),strcat('./',formulation, '_', num2str(CypScore),'/',formulation, '_', num2str(CypScore),'_', 'overlaid','.fig'))
         
         case 'racemic'
-            mkdir(strcat(formulation, '_', num2str(CypScore)))
+            mkdir(strcat(formulation, '_', strrep(num2str(CypScore),'.','_')))
 
             %we are going to run this twice, with half conc each of R and S enantiomers
             DoseTableRAC = DoseTable;
