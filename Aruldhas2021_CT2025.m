@@ -22,9 +22,9 @@ function sys = Aruldhas2021_CT2025(flag)
         case 'R'
             % Population means for R-Methadone (Table 2)
             Ka  = 0.123;                                        % tablet (1/h)
-            CL  = 15.7;                                         % (L/h)
+            CL  = 15.7  ;                                   % (L/h) 
             CYP_score = 1;                                      % Set 2.0 for ultra rapid, 1.5 for rapid, 1 for normal, 0.5 for intermediate and 0 for poor metaboliser
-            CLF = (0.217*(1+0.745*(CYP_score-1)))^0.75;         % (L/h), note: this equation assumes heterozygous genotype of rs2246709 (not indicated) and a body weight of 70kg (not indicated)
+            CLF = (0.217*(1+0.745*(CYP_score-1)));         % (L/h), note: this equation assumes heterozygous genotype of rs2246709 (not indicated) and a body weight of 70kg (not indicated)
             CL3 = 25.7;                                         % (L/h)
             Q4  = 69.2;                                         % (L/h)
             V2  = 176;                                          % (L)
@@ -33,9 +33,9 @@ function sys = Aruldhas2021_CT2025(flag)
         case 'S'
             % Population means for S-Methadone (Table 2)
             Ka  = 0.257;                                        % tablet (1/h)
-            CL  = 13.0;                                         % (L/h)
+            CL  = 13.0;
             CYP_score = 1;                                      % Set 2.0 for ultra rapid, 1.5 for rapid, 1 for normal, 0.5 for intermediate and 0 for poor metaboliser
-            CLF = (0.135*(1+0.636*(CYP_score-1)))^0.75;         % (L/h), note: this equation assumes a dominant genotype for rs11882424 (not indicated) and a body weight of 70kg (not indicated)
+            CLF = (0.135*(1+0.636*(CYP_score-1)));         % (L/h), note: this equation assumes a dominant genotype for rs11882424 (not indicated) and a body weight of 70kg (not indicated)
             CL3 = 7.97;                                         % (L/h)
             Q4  = 105;                                          % (L/h)
             V2  = 98.3;                                         % (L)

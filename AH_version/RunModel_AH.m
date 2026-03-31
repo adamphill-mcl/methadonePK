@@ -3,9 +3,10 @@
 % denotes the sub-type of methadone simulated by the Aruldhas model.
 % The time step of the simulation output is defined by dt.
 % The results are returned in table format.
-function RunTable = RunModel_AH(DoseTable,flag,dt)
+function RunTable = RunModel_AH(DoseTable,flag,dt,CypScore,RF,BW)
     % Construct an instance of the model
-    sys = Aruldhas2021_AH(flag);       % construct the system
+    %sys = Aruldhas2021_AH(flag,CypScore);       % construct the system
+    sys = Aruldhas2021_CT_Adult(flag,CypScore,RF,BW);       % construct the system
     sys = bdSetVar(sys,'A1',0);     % set initial conditions to zero
     sys = bdSetVar(sys,'A2',0);
     sys = bdSetVar(sys,'A3',0);
@@ -13,8 +14,8 @@ function RunTable = RunModel_AH(DoseTable,flag,dt)
     sys.tspan = [-1 0];             % set time span to end at zero
     %bdGUI(sys);
 
-    % init result 
-    RunTable = table();
+    % Collect each interval separately to avoid repeated table growth.
+    runSegments = cell(size(DoseTable,1),1);
 
     % for each row in DoseTable ...
     ndoses = size(DoseTable,1);
@@ -43,9 +44,10 @@ function RunTable = RunModel_AH(DoseTable,flag,dt)
         tpoints = duration(tdomain',0,0);
 
         % Append the results
-        RunTable = [RunTable ; struct2table(struct('t',tpoints, 'A1',A1', 'A2',A2','A3',A3', 'A4',A4'))];
+        runSegments{row} = struct2table(struct('t',tpoints, 'A1',A1', 'A2',A2','A3',A3', 'A4',A4'));
     end
 
     % Convert the results to a timetable
+    RunTable = vertcat(runSegments{:});
     RunTable = table2timetable(RunTable);
 end

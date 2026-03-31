@@ -1,4 +1,4 @@
-function sys = Aruldhas2021_AH(flag)
+function sys = Aruldhas2021_AH(flag, CypScore)
     % Aruldhas2021  Pharmacokinetics of R and S-Methadone in children
     % Four-compartment pharmacokinetic model of Methadone and its
     % metabolites. Implemented for the Brain Dynamics Toolbox.
@@ -24,7 +24,7 @@ function sys = Aruldhas2021_AH(flag)
             Ka  = 0.123;                                        % tablet (1/h)
             CL  = 15.7;
             CL1 = 12.2931;                                      % (L/h) now set these as constant, based on CLF fraction of CL for normal metaboloser
-            CYP_score = 2;                                      % Set 2.0 for ultra rapid, 1.5 for rapid, 1 for normal, 0.5 for intermediate and 0 for poor metaboliser
+            CYP_score = CypScore;                                      % Set 2.0 for ultra rapid, 1.5 for rapid, 1 for normal, 0.5 for intermediate and 0 for poor metaboliser
             CLF = (0.217*(1+0.745*(CYP_score-1)));         % (L/h), note: this equation assumes heterozygous genotype of rs2246709 (not indicated) and a body weight of 70kg (not indicated)
             CL3 = 25.7;                                         % (L/h)
             Q4  = 69.2;                                         % (L/h)
@@ -36,7 +36,7 @@ function sys = Aruldhas2021_AH(flag)
             Ka  = 0.257;                                        % tablet (1/h)
             CL  = 13.0;
             CL1 = 11.245                                        % (L/h)
-            CYP_score = 1;                                      % Set 2.0 for ultra rapid, 1.5 for rapid, 1 for normal, 0.5 for intermediate and 0 for poor metaboliser
+            CYP_score = CypScore;                                      % Set 2.0 for ultra rapid, 1.5 for rapid, 1 for normal, 0.5 for intermediate and 0 for poor metaboliser
             CLF = (0.135*(1+0.636*(CYP_score-1)));         % (L/h), note: this equation assumes a dominant genotype for rs11882424 (not indicated) and a body weight of 70kg (not indicated)
             CL3 = 7.97;                                         % (L/h)
             Q4  = 105;                                          % (L/h)
