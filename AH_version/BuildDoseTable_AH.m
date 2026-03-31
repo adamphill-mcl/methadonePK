@@ -11,7 +11,15 @@ function DoseTable = BuildDoseTable_AH(formulation, doseOriginal, overdoseMultip
     validateattributes(doseOriginal, {'numeric'}, {'scalar', 'real', 'nonnegative'}, mfilename, 'doseOriginal');
     validateattributes(overdoseMultiplier, {'numeric'}, {'scalar', 'real', 'nonnegative'}, mfilename, 'overdoseMultiplier');
 
-    F1_bioavailability = 0.718;
+    switch formulation
+        case 'R'
+            F1_bioavailability = 0.718;
+        case 'S'
+            F1_bioavailability = 0.606;
+        otherwise
+            error('BuildDoseTable_AH only supports ''R'' or ''S'' formulations.');
+    end
+
     dose = doseOriginal * F1_bioavailability;
 
     ndailyDoses = 26;

@@ -19,8 +19,6 @@ function [result, details] = ModelMain_Loewe(formulation, CypScore, BW, RF, dose
 
     pars = load('DrugPars.mat', 'DrugPars');
     DrugPars = pars.DrugPars;
-    DoseTable = BuildDoseTable_AH(formulation, doseOriginal, overdoseMultiplier);
-
     volumes.R = 176;
     volumes.S = 98.3;
     dt = 0.1;
@@ -36,6 +34,7 @@ function [result, details] = ModelMain_Loewe(formulation, CypScore, BW, RF, dose
 
     switch formulation
         case {'R', 'S'}
+            DoseTable = BuildDoseTable_AH(formulation, doseOriginal, overdoseMultiplier);
             runTable = RunModel_AH(DoseTable, formulation, dt, CypScore, RF, BW);
             runTable = addConcentrations(runTable, volumes.(formulation), mwMethadone);
             runTable = addBlocksAndRisk(runTable, DrugPars, formulation, riskCoeff);
@@ -52,13 +51,13 @@ function [result, details] = ModelMain_Loewe(formulation, CypScore, BW, RF, dose
             details = buildDetailsStruct(outputDir, formulation, CypScore, BW, RF, doseOriginal, overdoseMultiplier, DoseTable);
 
         case 'racemic'
-            DoseTableRac = DoseTable;
-            DoseTableRac.Conc = DoseTableRac.Conc ./ 2;
+            DoseTableR = BuildDoseTable_AH('R', doseOriginal ./ 2, overdoseMultiplier);
+            DoseTableS = BuildDoseTable_AH('S', doseOriginal ./ 2, overdoseMultiplier);
 
-            runTableR = RunModel_AH(DoseTableRac, 'R', dt, CypScore, RF, BW);
+            runTableR = RunModel_AH(DoseTableR, 'R', dt, CypScore, RF, BW);
             runTableR = addConcentrations(runTableR, volumes.R, mwMethadone);
 
-            runTableS = RunModel_AH(DoseTableRac, 'S', dt, CypScore, RF, BW);
+            runTableS = RunModel_AH(DoseTableS, 'S', dt, CypScore, RF, BW);
             runTableS = addConcentrations(runTableS, volumes.S, mwMethadone);
 
             result = buildRacemicTable(runTableR, runTableS, DrugPars, riskCoeff);
@@ -69,10 +68,11 @@ function [result, details] = ModelMain_Loewe(formulation, CypScore, BW, RF, dose
             figOverlay = figure();
             plotRacemicRun(result, runLabel);
 
-            saveRacemicOutputs(outputDir, runId, runTableR, runTableS, result, DoseTable, figStacked, figOverlay);
+            saveRacemicOutputs(outputDir, runId, runTableR, runTableS, result, DoseTableR, DoseTableS, figStacked, figOverlay);
 
-            details = buildDetailsStruct(outputDir, formulation, CypScore, BW, RF, doseOriginal, overdoseMultiplier, DoseTable);
-            details.DoseTableRacemic = DoseTableRac;
+            details = buildDetailsStruct(outputDir, formulation, CypScore, BW, RF, doseOriginal, overdoseMultiplier, []);
+            details.DoseTableR = DoseTableR;
+            details.DoseTableS = DoseTableS;
             details.RunTableR = runTableR;
             details.RunTableS = runTableS;
 
@@ -210,13 +210,14 @@ function saveRunOutputs(outputDir, runId, runTable, doseTable, figStacked, figOv
     savefig(figOverlay, [baseName '_overlaid.fig']);
 end
 
-function saveRacemicOutputs(outputDir, runId, runTableR, runTableS, myTable, doseTable, figStacked, figOverlay)
+function saveRacemicOutputs(outputDir, runId, runTableR, runTableS, myTable, doseTableR, doseTableS, figStacked, figOverlay)
     baseName = fullfile(outputDir, runId);
     RunTableR = runTableR;
     RunTableS = runTableS;
     MyTable = myTable;
-    DoseTable = doseTable;
-    save(baseName, 'RunTableR', 'RunTableS', 'MyTable', 'DoseTable');
+    DoseTableR = doseTableR;
+    DoseTableS = doseTableS;
+    save(baseName, 'RunTableR', 'RunTableS', 'MyTable', 'DoseTableR', 'DoseTableS');
     savefig(figStacked, [baseName '_stacked.fig']);
     savefig(figOverlay, [baseName '_overlaid.fig']);
 end
