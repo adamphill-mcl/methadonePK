@@ -6,7 +6,11 @@ function BatchSummary = RunBatch_Loewe(batchInput)
     end
 
     batchTable = loadBatchTable(batchInput);
-    requiredVars = ["formulation", "baseline_dose", "overdose", "RF", "BW", "CYPScore"];
+    if ~ismember("hill_mode", string(batchTable.Properties.VariableNames))
+        batchTable.hill_mode = repmat("ideal", height(batchTable), 1);
+    end
+
+    requiredVars = ["formulation", "baseline_dose", "overdose", "RF", "BW", "CYPScore", "hill_mode"];
     missingVars = requiredVars(~ismember(requiredVars, string(batchTable.Properties.VariableNames)));
     if ~isempty(missingVars)
         error('Batch table is missing required variables: %s', strjoin(missingVars, ', '));
@@ -28,7 +32,8 @@ function BatchSummary = RunBatch_Loewe(batchInput)
                 batchTable.BW(row), ...
                 batchTable.RF(row), ...
                 batchTable.baseline_dose(row), ...
-                batchTable.overdose(row));
+                batchTable.overdose(row), ...
+                char(string(batchTable.hill_mode(row))));
 
             OutputDir(row) = string(details.OutputDir);
             Status(row) = "ok";
