@@ -1,2 +1,7 @@
-formulation,baseline_dose,overdose,RF,BW,CYPScore
-R,120,1,1,70,1
+formulation,baseline_dose,overdose,RF,BW,CYPScore,hill_mode
+R,120,1,1,70,1,ideal
+S,120,1,1,70,1,real
+R,120,1,1,70,0.5,ideal
+S,120,1,1,70,0.5,real
+racemic,120,1,1,70,1,real
+racemic,120,1,1,70,0.5,ideal

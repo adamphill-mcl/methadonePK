@@ -1,4 +1,4 @@
-function [result, details] = ModelMain_Loewe(formulation, CypScore, BW, RF, doseOriginal, overdoseMultiplier)
+function [result, details] = ModelMain_Loewe(formulation, CypScore, BW, RF, doseOriginal, overdoseMultiplier, hillMode)
     % Combined driver for R-, S-, and racemic methadone simulations.
 
     if nargin < 2 || isempty(CypScore)
@@ -16,16 +16,18 @@ function [result, details] = ModelMain_Loewe(formulation, CypScore, BW, RF, dose
     if nargin < 6 || isempty(overdoseMultiplier)
         overdoseMultiplier = 1;
     end
+    if nargin < 7 || isempty(hillMode)
+        hillMode = 'ideal';
+    end
 
-    pars = load('DrugPars.mat', 'DrugPars');
-    DrugPars = pars.DrugPars;
+    DrugPars = BuildDrugPars_AH(hillMode);
     volumes.R = 176;
     volumes.S = 98.3;
     dt = 0.1;
     mwMethadone = 309.445;
     riskCoeff = struct('BCaL', 0.691, 'BKr', -0.617, 'BNaL', 0.377);
-    runId = composeRunId(formulation, CypScore, BW, RF, doseOriginal, overdoseMultiplier);
-    runLabel = composeRunLabel(formulation, CypScore, BW, RF, doseOriginal, overdoseMultiplier);
+    runId = composeRunId(formulation, CypScore, BW, RF, doseOriginal, overdoseMultiplier, hillMode);
+    runLabel = composeRunLabel(formulation, CypScore, BW, RF, doseOriginal, overdoseMultiplier, hillMode);
     outputDir = fullfile(pwd, runId);
 
     if ~exist(outputDir, 'dir')
@@ -48,7 +50,7 @@ function [result, details] = ModelMain_Loewe(formulation, CypScore, BW, RF, dose
             saveRunOutputs(outputDir, runId, runTable, DoseTable, figStacked, figOverlay);
 
             result = runTable;
-            details = buildDetailsStruct(outputDir, formulation, CypScore, BW, RF, doseOriginal, overdoseMultiplier, DoseTable);
+            details = buildDetailsStruct(outputDir, formulation, CypScore, BW, RF, doseOriginal, overdoseMultiplier, hillMode, DoseTable);
 
         case 'racemic'
             DoseTableR = BuildDoseTable_AH('R', doseOriginal ./ 2, overdoseMultiplier);
@@ -70,7 +72,7 @@ function [result, details] = ModelMain_Loewe(formulation, CypScore, BW, RF, dose
 
             saveRacemicOutputs(outputDir, runId, runTableR, runTableS, result, DoseTableR, DoseTableS, figStacked, figOverlay);
 
-            details = buildDetailsStruct(outputDir, formulation, CypScore, BW, RF, doseOriginal, overdoseMultiplier, []);
+            details = buildDetailsStruct(outputDir, formulation, CypScore, BW, RF, doseOriginal, overdoseMultiplier, hillMode, []);
             details.DoseTableR = DoseTableR;
             details.DoseTableS = DoseTableS;
             details.RunTableR = runTableR;
@@ -81,7 +83,7 @@ function [result, details] = ModelMain_Loewe(formulation, CypScore, BW, RF, dose
     end
 end
 
-function details = buildDetailsStruct(outputDir, formulation, CypScore, BW, RF, doseOriginal, overdoseMultiplier, DoseTable)
+function details = buildDetailsStruct(outputDir, formulation, CypScore, BW, RF, doseOriginal, overdoseMultiplier, hillMode, DoseTable)
     details = struct( ...
         'OutputDir', outputDir, ...
         'Formulation', formulation, ...
@@ -90,12 +92,15 @@ function details = buildDetailsStruct(outputDir, formulation, CypScore, BW, RF, 
         'RF', RF, ...
         'DoseOriginal', doseOriginal, ...
         'OverdoseMultiplier', overdoseMultiplier, ...
+        'HillMode', char(string(hillMode)), ...
+        'DrugPars', DrugParsFromMode(hillMode), ...
         'DoseTable', DoseTable);
 end
 
-function runId = composeRunId(formulation, CypScore, BW, RF, doseOriginal, overdoseMultiplier)
-    runId = sprintf('%s_cyp_%s_bw_%s_rf_%s_dose_%s_od_%s', ...
+function runId = composeRunId(formulation, CypScore, BW, RF, doseOriginal, overdoseMultiplier, hillMode)
+    runId = sprintf('%s_hill_%s_cyp_%s_bw_%s_rf_%s_dose_%s_od_%s', ...
         formulation, ...
+        char(string(hillMode)), ...
         numToTag(CypScore), ...
         numToTag(BW), ...
         numToTag(RF), ...
@@ -107,14 +112,19 @@ function tag = numToTag(value)
     tag = strrep(num2str(value, '%.6g'), '.', '_');
 end
 
-function label = composeRunLabel(formulation, CypScore, BW, RF, doseOriginal, overdoseMultiplier)
-    label = sprintf('%s | CYP %s | BW %s kg | RF %s | Dose %s | OD x%s', ...
+function label = composeRunLabel(formulation, CypScore, BW, RF, doseOriginal, overdoseMultiplier, hillMode)
+    label = sprintf('%s | Hill %s | CYP %s | BW %s kg | RF %s | Dose %s | OD x%s', ...
         formulation, ...
+        char(string(hillMode)), ...
         num2str(CypScore, '%.6g'), ...
         num2str(BW, '%.6g'), ...
         num2str(RF, '%.6g'), ...
         num2str(doseOriginal, '%.6g'), ...
         num2str(overdoseMultiplier, '%.6g'));
+end
+
+function DrugPars = DrugParsFromMode(hillMode)
+    DrugPars = BuildDrugPars_AH(hillMode);
 end
 
 function runTable = addConcentrations(runTable, apparentVolume, molecularWeight)
