@@ -27,6 +27,7 @@ function [result, details] = ModelMain_Loewe(formulation, CypScore, BW, RF, dose
     mwMethadone = 309.445;
     riskCoeff = struct('BCaL', 0.691, 'BKr', -0.617, 'BNaL', 0.377);
     runId = composeRunId(formulation, CypScore, BW, RF, doseOriginal, overdoseMultiplier);
+    runLabel = composeRunLabel(formulation, CypScore, BW, RF, doseOriginal, overdoseMultiplier);
     outputDir = fullfile(pwd, runId);
 
     if ~exist(outputDir, 'dir')
@@ -40,10 +41,10 @@ function [result, details] = ModelMain_Loewe(formulation, CypScore, BW, RF, dose
             runTable = addBlocksAndRisk(runTable, DrugPars, formulation, riskCoeff);
 
             figStacked = figure();
-            stackedplot(runTable);
+            plotStackedRun(runTable, runLabel);
 
             figOverlay = figure();
-            plotSingleRun(runTable);
+            plotSingleRun(runTable, runLabel);
 
             saveRunOutputs(outputDir, runId, runTable, DoseTable, figStacked, figOverlay);
 
@@ -63,10 +64,10 @@ function [result, details] = ModelMain_Loewe(formulation, CypScore, BW, RF, dose
             result = buildRacemicTable(runTableR, runTableS, DrugPars, riskCoeff);
 
             figStacked = figure();
-            stackedplot(result);
+            plotStackedRun(result, runLabel);
 
             figOverlay = figure();
-            plotRacemicRun(result);
+            plotRacemicRun(result, runLabel);
 
             saveRacemicOutputs(outputDir, runId, runTableR, runTableS, result, DoseTable, figStacked, figOverlay);
 
@@ -104,6 +105,16 @@ end
 
 function tag = numToTag(value)
     tag = strrep(num2str(value, '%.6g'), '.', '_');
+end
+
+function label = composeRunLabel(formulation, CypScore, BW, RF, doseOriginal, overdoseMultiplier)
+    label = sprintf('%s | CYP %s | BW %s kg | RF %s | Dose %s | OD x%s', ...
+        formulation, ...
+        num2str(CypScore, '%.6g'), ...
+        num2str(BW, '%.6g'), ...
+        num2str(RF, '%.6g'), ...
+        num2str(doseOriginal, '%.6g'), ...
+        num2str(overdoseMultiplier, '%.6g'));
 end
 
 function runTable = addConcentrations(runTable, apparentVolume, molecularWeight)
@@ -161,7 +172,12 @@ function score = riskScoreFromBlocks(ICaLBlock, IKrBlock, INaLBlock, coeff)
     score = coeff.BCaL .* log(1 - ICaLBlock) + coeff.BKr .* log(1 - IKrBlock) + coeff.BNaL .* log(1 - INaLBlock);
 end
 
-function plotSingleRun(runTable)
+function plotStackedRun(runTable, runLabel)
+    stackedplot(runTable);
+    sgtitle(runLabel, 'Interpreter', 'none');
+end
+
+function plotSingleRun(runTable, runLabel)
     plot(runTable.t, runTable.A1, 'DisplayName', 'A1');
     hold on;
     plot(runTable.t, runTable.A2, 'DisplayName', 'A2');
@@ -169,10 +185,11 @@ function plotSingleRun(runTable)
     plot(runTable.t, runTable.A4, 'DisplayName', 'A4');
     plot(runTable.t, runTable.RiskScore, 'DisplayName', 'RiskScore');
     hold off;
+    title(runLabel, 'Interpreter', 'none');
     legend('Location', 'best');
 end
 
-function plotRacemicRun(myTable)
+function plotRacemicRun(myTable, runLabel)
     plot(myTable.t, myTable.conc_methR, 'DisplayName', 'conc\_methR');
     hold on;
     plot(myTable.t, myTable.conc_metabR, 'DisplayName', 'conc\_metabR');
@@ -180,6 +197,7 @@ function plotRacemicRun(myTable)
     plot(myTable.t, myTable.conc_metabS, 'DisplayName', 'conc\_metabS');
     plot(myTable.t, myTable.RiskScore, 'DisplayName', 'RiskScore');
     hold off;
+    title(runLabel, 'Interpreter', 'none');
     legend('Location', 'best');
 end
 
