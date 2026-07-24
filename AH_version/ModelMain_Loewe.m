@@ -21,8 +21,10 @@ function [result, details] = ModelMain_Loewe(formulation, CypScore, BW, RF, dose
     end
 
     DrugPars = BuildDrugPars_AH(hillMode);
-    volumes.R = 176;
-    volumes.S = 98.3;
+%     volumes.R = 176; %these values were the legacy ones from the original Arudhas model. They should have been updatedc to reflect the adult model 
+%     volumes.S = 98.3;
+    volumes.R = 145; %these are the volumes from Foster Adults paper
+    volumes.S = 94;
     dt = 0.1;
     mwMethadone = 309.445;
     riskCoeff = struct('BCaL', 0.691, 'BKr', -0.617, 'BNaL', 0.377);
