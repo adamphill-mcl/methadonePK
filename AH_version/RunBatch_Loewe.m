@@ -45,6 +45,8 @@ function BatchSummary = RunBatch_Loewe(batchInput)
             Status(row) = "error";
             Message(row) = string(ME.message);
         end
+
+        close all force;
     end
 
     BatchSummary = batchTable;
